@@ -33,6 +33,12 @@ namespace DataContainers
             Root = null;
             Console.WriteLine($"TConstructor:\t{GetHashCode()}");
         }
+        public Tree(params int[] values):this() { 
+        foreach(int i in values)
+            {
+                Insert(i);
+            }
+        }
         ~Tree()
         {
             Console.WriteLine($"TDestructor:\t{GetHashCode()}");
@@ -56,45 +62,30 @@ namespace DataContainers
                 else Insert(Data, Root.pRight);
             }
         }
-        public int MinValue()
-        {
-            return MinValue(Root);
-        }
+        public int MinValue() => MinValue(Root);
         int MinValue(Element Root)
         {
             if (Root == null) throw new Exception("Tree is empty");
             return Root.pLeft == null ? Root.Data : MinValue(Root.pLeft);
         }
-        public int MaxValue()
-        {
-            return MaxValue(Root);
-        }
+        public int MaxValue() => MaxValue(Root);
         int MaxValue(Element Root)
         {
             if (Root == null) throw new Exception("Tree is empty");
             return Root.pRight == null ? Root.Data : MaxValue(Root.pRight);
         }
-        public int Sum()
-        {
-            return Sum(Root);
-        }
+        public int Sum() => Sum(Root);
         int Sum(Element Root)
         {
             if (Root == null) return 0;
             else return Sum(Root.pLeft) + Sum(Root.pRight) + Root.Data;
         }
-        public int Count()
-        {
-            return Count(Root);
-        }
+        public int Count() => Count(Root);
         int Count(Element Root)
         {
             return Root == null ? 0 : Count(Root.pLeft) + Count(Root.pRight) + 1;
         }
-        public double Avarage()
-        {
-            return (double)Sum(Root) / Count(Root);
-        }
+        public double Avarage() => (double)Sum(Root) / Count(Root);
         public void Print()
         {
             Print(Root);
@@ -108,14 +99,7 @@ namespace DataContainers
             Print(Root.pRight);
         }
 
-        public void erase(int Data)
-        {
-            erase(Data, Root);
-        }
-        public void delete()
-        {
-            delete(Root);
-        }
+        public void erase(int Data) => erase(Data, Root);
         Element erase(int Data, Element Root)
         {
             if (Root == null) return Root;
@@ -135,17 +119,19 @@ namespace DataContainers
                     return Root.pLeft;
                 }
 
-                Root.Data = MinValue(Root.pRight);
+                if(Root.pRight != null)
+                    Root.Data = MinValue(Root.pRight);
+                else
+                    Root.Data = MinValue(Root.pLeft);
 
                 Root.pRight = erase(Root.Data, Root.pRight);
             }
 
             return Root;
         }
-        void delete(Element Root)
-        {
+        protected void delete(Element Root) { 
             Root = null;
-            Root = new Element(0);
+            GC.Collect(1);
         }
 
         public int depth()
@@ -170,6 +156,9 @@ namespace DataContainers
                 DepthPrint(Depth - 1, Root.pLeft);
                 Console.Write(Root.Data + "\t");
             }
+        }
+        public void Clear() {
+            delete(Root);
         }
 
         PerfomanceCheck CheckPerfomanceFunction = (tree) =>
